@@ -71,7 +71,7 @@ impl Vec3 {
     }
 
     pub fn squared_length(&self) -> f32 {
-        self.0.powf(2.) + self.1.powf(2.) + self.2.powf(2.)
+        self.0 * self.0 + self.1 * self.1 + self.2 * self.2
     }
 
     pub fn make_unit_vector(&mut self) {

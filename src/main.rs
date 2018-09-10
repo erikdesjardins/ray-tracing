@@ -1,6 +1,7 @@
 use std::io::{self, stdout};
 
 mod ppm;
+mod ray;
 mod vec;
 
 fn main() -> Result<(), io::Error> {

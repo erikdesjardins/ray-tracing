@@ -81,17 +81,16 @@ impl Vec3 {
         self.2 *= k;
     }
 
-    pub fn unit_vector(&self) -> Self {
-        let mut vec = self.clone();
-        vec.make_unit_vector();
-        vec
+    pub fn unit_vector(mut self) -> Self {
+        self.make_unit_vector();
+        self
     }
 
-    pub fn dot(&self, other: &Self) -> f32 {
+    pub fn dot(self, other: Self) -> f32 {
         self.0 * other.0 + self.1 * other.1 + self.2 + other.2
     }
 
-    pub fn cross(&self, other: &Self) -> Self {
+    pub fn cross(self, other: Self) -> Self {
         Vec3(
             self.1 * other.2 - self.2 * other.1,
             -(self.0 * other.2 - self.2 * other.0),

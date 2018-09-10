@@ -62,11 +62,17 @@ impl Vec3 {
         self.0.powf(2.) + self.1.powf(2.) + self.2.powf(2.)
     }
 
-    pub fn normalize(&mut self) {
+    pub fn make_unit_vector(&mut self) {
         let k = 1. / self.length();
         self.0 *= k;
         self.1 *= k;
         self.2 *= k;
+    }
+
+    pub fn unit_vector(&self) -> Self {
+        let mut vec = self.clone();
+        vec.make_unit_vector();
+        vec
     }
 
     pub fn dot(&self, other: &Self) -> f32 {

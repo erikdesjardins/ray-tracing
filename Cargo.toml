@@ -1,0 +1,6 @@
+[package]
+name = "ray-tracing"
+version = "0.1.0"
+authors = ["Erik Desjardins <erikdesjardins@users.noreply.github.com>"]
+
+[dependencies]

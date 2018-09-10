@@ -1,7 +1,5 @@
 use std::io::{self, Write};
 
-use vec::Vec3;
-
 pub struct Writer<W: Write> {
     writer: W,
     written: u64,
@@ -10,12 +8,9 @@ pub struct Writer<W: Write> {
 
 impl<W: Write> Writer<W> {
     pub fn new(mut writer: W, x: u64, y: u64) -> Result<Self, io::Error> {
-        // "P3" means colors are in ASCII
-        writeln!(writer, "P3")?;
-        // columns (x), then rows (y)
-        writeln!(writer, "{} {}", x, y)?;
-        // max color
-        writeln!(writer, "255")?;
+        writeln!(writer, "P3")?; // colors are in ASCII
+        writeln!(writer, "{} {}", x, y)?; // columns and rows
+        writeln!(writer, "255")?; // max color
         Ok(Self {
             writer,
             written: 0,
@@ -23,8 +18,8 @@ impl<W: Write> Writer<W> {
         })
     }
 
-    pub fn write_pixel(&mut self, color: &Vec3<u8>) -> Result<(), io::Error> {
-        writeln!(self.writer, "{} {} {}", color.x, color.y, color.z)?;
+    pub fn write_pixel(&mut self, r: u8, g: u8, b: u8) -> Result<(), io::Error> {
+        writeln!(self.writer, "{} {} {}", r, g, b)?;
         self.written += 1;
         assert!(
             self.written <= self.expected,

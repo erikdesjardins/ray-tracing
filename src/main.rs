@@ -1,13 +1,25 @@
 use std::io::{self, stdout};
 
 use ray::Ray;
-use vec::Vec3;
+use vec::{dot, Vec3};
 
 mod ppm;
 mod ray;
 mod vec;
 
+fn hit_sphere(center: Vec3, radius: f32, ray: &Ray) -> bool {
+    let oc = ray.origin - center;
+    let a = dot(ray.direction, ray.direction);
+    let b = 2. * dot(oc, ray.direction);
+    let c = dot(oc, oc) - (radius * radius);
+    let discr = (b * b) - (4. * a * c);
+    discr > 0.
+}
+
 fn color(ray: &Ray) -> Vec3 {
+    if hit_sphere(Vec3(0., 0., -1.), 0.5, ray) {
+        return Vec3(1., 0., 0.);
+    }
     let unit_direction = ray.direction.unit_vector();
     let t = 0.5 * (unit_direction.y() + 1.);
     (1. - t) * Vec3(1., 1., 1.) + t * Vec3(0.5, 0.7, 1.)
@@ -30,7 +42,7 @@ fn main() -> Result<(), io::Error> {
 
             let r = Ray {
                 origin,
-                direction: lower_left_corner + u * horizontal + v * vertical,
+                direction: lower_left_corner + (u * horizontal) + (v * vertical),
             };
             let c = color(&r);
 

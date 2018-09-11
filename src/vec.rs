@@ -45,11 +45,11 @@ impl Mul<Vec3> for f32 {
     }
 }
 
-impl Div<Vec3> for f32 {
-    type Output = Vec3;
-    fn div(self, vec: Vec3) -> Vec3 {
-        let k = 1. / self;
-        Vec3(vec.0 * k, vec.1 * k, vec.2 * k)
+impl Div<f32> for Vec3 {
+    type Output = Self;
+    fn div(self, other: f32) -> Self {
+        let k = 1. / other;
+        Vec3(self.0 * k, self.1 * k, self.2 * k)
     }
 }
 

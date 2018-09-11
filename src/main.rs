@@ -1,34 +1,32 @@
+use std::f32;
 use std::io::{self, stdout};
 
+use hit::Hittable;
 use ray::Ray;
-use vec::{dot, Vec3};
+use sphere::Sphere;
+use vec::Vec3;
 
+mod hit;
 mod ppm;
 mod ray;
+mod sphere;
 mod vec;
 
-fn hit_sphere(center: Vec3, radius: f32, r: &Ray) -> f32 {
-    let oc = r.origin - center;
-    let a = dot(r.direction, r.direction);
-    let b = 2. * dot(oc, r.direction);
-    let c = dot(oc, oc) - (radius * radius);
-    let discr = (b * b) - (4. * a * c);
-    if discr < 0. {
-        -1.
-    } else {
-        (-b - discr.sqrt()) / (2. * a)
+fn color(r: &Ray, world: impl Hittable) -> Vec3 {
+    match world.hit(r, 0.0..f32::MAX) {
+        Some(rec) => {
+            0.5 * Vec3(
+                rec.normal.x() + 1.,
+                rec.normal.y() + 1.,
+                rec.normal.z() + 1.,
+            )
+        }
+        None => {
+            let unit_direction = r.direction.unit_vector();
+            let t = 0.5 * (unit_direction.y() + 1.);
+            (1. - t) * Vec3(1., 1., 1.) + t * Vec3(0.5, 0.7, 1.)
+        }
     }
-}
-
-fn color(r: &Ray) -> Vec3 {
-    let t = hit_sphere(Vec3(0., 0., -1.), 0.5, r);
-    if t > 0. {
-        let n = (r.point_at(t) - Vec3(0., 0., -1.)).unit_vector();
-        return 0.5 * Vec3(n.x() + 1., n.y() + 1., n.z() + 1.);
-    }
-    let unit_direction = r.direction.unit_vector();
-    let t = 0.5 * (unit_direction.y() + 1.);
-    (1. - t) * Vec3(1., 1., 1.) + t * Vec3(0.5, 0.7, 1.)
 }
 
 fn main() -> Result<(), io::Error> {
@@ -41,6 +39,17 @@ fn main() -> Result<(), io::Error> {
     let vertical = Vec3(0., 2., 0.);
     let origin = Vec3(0., 0., 0.);
 
+    let world = vec![
+        Sphere {
+            center: Vec3(0., 0., -1.),
+            radius: 0.5,
+        },
+        Sphere {
+            center: Vec3(0., -100.5, -1.),
+            radius: 100.,
+        },
+    ];
+
     for j in (0..ny).rev() {
         for i in 0..nx {
             let u = i as f32 / nx as f32;
@@ -50,7 +59,7 @@ fn main() -> Result<(), io::Error> {
                 origin,
                 direction: lower_left_corner + (u * horizontal) + (v * vertical),
             };
-            let c = color(&r);
+            let c = color(&r, &world);
 
             let r = (255.99 * c.0) as u8;
             let g = (255.99 * c.1) as u8;

@@ -7,20 +7,26 @@ mod ppm;
 mod ray;
 mod vec;
 
-fn hit_sphere(center: Vec3, radius: f32, ray: &Ray) -> bool {
-    let oc = ray.origin - center;
-    let a = dot(ray.direction, ray.direction);
-    let b = 2. * dot(oc, ray.direction);
+fn hit_sphere(center: Vec3, radius: f32, r: &Ray) -> f32 {
+    let oc = r.origin - center;
+    let a = dot(r.direction, r.direction);
+    let b = 2. * dot(oc, r.direction);
     let c = dot(oc, oc) - (radius * radius);
     let discr = (b * b) - (4. * a * c);
-    discr > 0.
+    if discr < 0. {
+        -1.
+    } else {
+        (-b - discr.sqrt()) / (2. * a)
+    }
 }
 
-fn color(ray: &Ray) -> Vec3 {
-    if hit_sphere(Vec3(0., 0., -1.), 0.5, ray) {
-        return Vec3(1., 0., 0.);
+fn color(r: &Ray) -> Vec3 {
+    let t = hit_sphere(Vec3(0., 0., -1.), 0.5, r);
+    if t > 0. {
+        let n = (r.point_at(t) - Vec3(0., 0., -1.)).unit_vector();
+        return 0.5 * Vec3(n.x() + 1., n.y() + 1., n.z() + 1.);
     }
-    let unit_direction = ray.direction.unit_vector();
+    let unit_direction = r.direction.unit_vector();
     let t = 0.5 * (unit_direction.y() + 1.);
     (1. - t) * Vec3(1., 1., 1.) + t * Vec3(0.5, 0.7, 1.)
 }

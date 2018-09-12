@@ -74,16 +74,9 @@ impl Vec3 {
         self.0 * self.0 + self.1 * self.1 + self.2 * self.2
     }
 
-    pub fn make_unit_vector(&mut self) {
+    pub fn unit_vector(&self) -> Self {
         let k = 1. / self.length();
-        self.0 *= k;
-        self.1 *= k;
-        self.2 *= k;
-    }
-
-    pub fn unit_vector(mut self) -> Self {
-        self.make_unit_vector();
-        self
+        Vec3(self.0 * k, self.1 * k, self.2 * k)
     }
 }
 

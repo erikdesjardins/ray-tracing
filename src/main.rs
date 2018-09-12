@@ -89,8 +89,9 @@ fn main() -> Result<(), io::Error> {
                 let r = cam.get_ray(u, v);
                 col += color(&mut rng, &r, &world);
             }
-            col /= ns as f32;
+            let col = col / ns as f32;
 
+            let col = Vec3(col.0.sqrt(), col.1.sqrt(), col.2.sqrt());
             let r = (255.99 * col.0) as u8;
             let g = (255.99 * col.1) as u8;
             let b = (255.99 * col.2) as u8;

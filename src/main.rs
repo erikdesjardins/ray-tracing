@@ -33,7 +33,7 @@ fn random_in_unit_sphere(rng: &mut impl Rng) -> Vec3 {
 }
 
 fn color(rng: &mut impl Rng, r: &Ray, world: impl Hittable) -> Vec3 {
-    match world.hit(r, 0.0..f32::MAX) {
+    match world.hit(r, 0.001..f32::MAX) {
         Some(rec) => {
             let target = rec.p + rec.normal + random_in_unit_sphere(rng);
             0.5 * color(

@@ -3,13 +3,13 @@ use std::io::{self, stdout};
 
 use hit::Hittable;
 use ray::Ray;
-use sphere::Sphere;
+use sph::Sphere;
 use vec::Vec3;
 
 mod hit;
 mod ppm;
 mod ray;
-mod sphere;
+mod sph;
 mod vec;
 
 fn color(r: &Ray, world: impl Hittable) -> Vec3 {

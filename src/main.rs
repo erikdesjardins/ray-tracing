@@ -19,13 +19,30 @@ mod ray;
 mod sph;
 mod vec;
 
-fn color(r: &Ray, world: impl Hittable) -> Vec3 {
+fn random_in_unit_sphere(rng: &mut impl Rng) -> Vec3 {
+    loop {
+        let p = 2.0 * Vec3(
+            rng.sample(Standard),
+            rng.sample(Standard),
+            rng.sample(Standard),
+        ) - Vec3(1., 1., 1.);
+        if p.squared_length() < 1. {
+            return p;
+        }
+    }
+}
+
+fn color(rng: &mut impl Rng, r: &Ray, world: impl Hittable) -> Vec3 {
     match world.hit(r, 0.0..f32::MAX) {
         Some(rec) => {
-            0.5 * Vec3(
-                rec.normal.x() + 1.,
-                rec.normal.y() + 1.,
-                rec.normal.z() + 1.,
+            let target = rec.p + rec.normal + random_in_unit_sphere(rng);
+            0.5 * color(
+                rng,
+                &Ray {
+                    origin: rec.p,
+                    direction: target - rec.p,
+                },
+                world,
             )
         }
         None => {
@@ -70,7 +87,7 @@ fn main() -> Result<(), io::Error> {
                 let u = (i as f32 + rng.sample::<f32, _>(Standard)) / nx as f32;
                 let v = (j as f32 + rng.sample::<f32, _>(Standard)) / ny as f32;
                 let r = cam.get_ray(u, v);
-                col += color(&r, &world);
+                col += color(&mut rng, &r, &world);
             }
             col /= ns as f32;
 

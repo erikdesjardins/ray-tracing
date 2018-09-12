@@ -1,11 +1,18 @@
 use std::f32;
 use std::io::{self, stdout};
 
+use rand::distributions::Standard;
+use rand::{Rng, SeedableRng, XorShiftRng};
+
+use cam::Camera;
 use hit::Hittable;
 use ray::Ray;
 use sph::Sphere;
 use vec::Vec3;
 
+extern crate rand;
+
+mod cam;
 mod hit;
 mod ppm;
 mod ray;
@@ -30,14 +37,13 @@ fn color(r: &Ray, world: impl Hittable) -> Vec3 {
 }
 
 fn main() -> Result<(), io::Error> {
+    let mut rng = XorShiftRng::from_seed([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
+
     let nx = 200;
     let ny = 100;
-    let mut ppm = ppm::Writer::new(stdout(), nx, ny)?;
+    let ns = 100;
 
-    let lower_left_corner = Vec3(-2., -1., -1.);
-    let horizontal = Vec3(4., 0., 0.);
-    let vertical = Vec3(0., 2., 0.);
-    let origin = Vec3(0., 0., 0.);
+    let mut ppm = ppm::Writer::new(stdout(), nx, ny)?;
 
     let world = vec![
         Sphere {
@@ -50,20 +56,27 @@ fn main() -> Result<(), io::Error> {
         },
     ];
 
+    let cam = Camera {
+        origin: Vec3(0., 0., 0.),
+        lower_left_corner: Vec3(-2., -1., -1.),
+        horizontal: Vec3(4., 0., 0.),
+        vertical: Vec3(0., 2., 0.),
+    };
+
     for j in (0..ny).rev() {
         for i in 0..nx {
-            let u = i as f32 / nx as f32;
-            let v = j as f32 / ny as f32;
+            let mut col = Vec3(0., 0., 0.);
+            for _ in 0..ns {
+                let u = (i as f32 + rng.sample::<f32, _>(Standard)) / nx as f32;
+                let v = (j as f32 + rng.sample::<f32, _>(Standard)) / ny as f32;
+                let r = cam.get_ray(u, v);
+                col += color(&r, &world);
+            }
+            col /= ns as f32;
 
-            let r = Ray {
-                origin,
-                direction: lower_left_corner + (u * horizontal) + (v * vertical),
-            };
-            let c = color(&r, &world);
-
-            let r = (255.99 * c.0) as u8;
-            let g = (255.99 * c.1) as u8;
-            let b = (255.99 * c.2) as u8;
+            let r = (255.99 * col.0) as u8;
+            let g = (255.99 * col.1) as u8;
+            let b = (255.99 * col.2) as u8;
 
             ppm.write_pixel(r, g, b)?;
         }

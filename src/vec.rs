@@ -1,4 +1,4 @@
-use std::ops::{Add, Div, Mul, Neg, Sub};
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
 #[derive(Debug, Clone, Copy)]
 pub struct Vec3(pub f32, pub f32, pub f32);
@@ -17,10 +17,26 @@ impl Add for Vec3 {
     }
 }
 
+impl AddAssign for Vec3 {
+    fn add_assign(&mut self, other: Self) {
+        self.0 += other.0;
+        self.1 += other.1;
+        self.2 += other.2;
+    }
+}
+
 impl Sub for Vec3 {
     type Output = Self;
     fn sub(self, other: Self) -> Self {
         Vec3(self.0 - other.0, self.1 - other.1, self.2 - other.2)
+    }
+}
+
+impl SubAssign for Vec3 {
+    fn sub_assign(&mut self, other: Self) {
+        self.0 -= other.0;
+        self.1 -= other.1;
+        self.2 -= other.2;
     }
 }
 
@@ -31,10 +47,26 @@ impl Mul for Vec3 {
     }
 }
 
+impl MulAssign for Vec3 {
+    fn mul_assign(&mut self, other: Self) {
+        self.0 *= other.0;
+        self.1 *= other.1;
+        self.2 *= other.2;
+    }
+}
+
 impl Div for Vec3 {
     type Output = Self;
     fn div(self, other: Self) -> Self {
         Vec3(self.0 / other.0, self.1 / other.1, self.2 / other.2)
+    }
+}
+
+impl DivAssign for Vec3 {
+    fn div_assign(&mut self, other: Self) {
+        self.0 /= other.0;
+        self.1 /= other.1;
+        self.2 /= other.2;
     }
 }
 
@@ -45,11 +77,27 @@ impl Mul<Vec3> for f32 {
     }
 }
 
+impl MulAssign<f32> for Vec3 {
+    fn mul_assign(&mut self, other: f32) {
+        self.0 *= other;
+        self.1 *= other;
+        self.2 *= other;
+    }
+}
+
 impl Div<f32> for Vec3 {
     type Output = Self;
     fn div(self, other: f32) -> Self {
         let k = 1. / other;
         Vec3(self.0 * k, self.1 * k, self.2 * k)
+    }
+}
+
+impl DivAssign<f32> for Vec3 {
+    fn div_assign(&mut self, other: f32) {
+        self.0 /= other;
+        self.1 /= other;
+        self.2 /= other;
     }
 }
 

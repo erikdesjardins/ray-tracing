@@ -1,3 +1,4 @@
+#![cfg_attr(not(feature = "cargo-clippy"), allow(unknown_lints))]
 #![allow(many_single_char_names)]
 
 use std::f32;

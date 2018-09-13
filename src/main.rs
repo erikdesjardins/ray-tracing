@@ -92,11 +92,11 @@ fn main() -> Result<(), io::Error> {
             let col = col / ns as f32;
 
             let col = Vec3(col.0.sqrt(), col.1.sqrt(), col.2.sqrt());
-            let r = (255.99 * col.0) as u8;
-            let g = (255.99 * col.1) as u8;
-            let b = (255.99 * col.2) as u8;
+            let ir = (255.99 * col.0) as u8;
+            let ig = (255.99 * col.1) as u8;
+            let ib = (255.99 * col.2) as u8;
 
-            ppm.write_pixel(r, g, b)?;
+            ppm.write_pixel(ir, ig, ib)?;
         }
     }
     Ok(())

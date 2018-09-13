@@ -7,14 +7,12 @@ branches:
 cache:
   cargo: true
 before_script:
-  - rustup toolchain add nightly
   - rustup component add rustfmt-preview
-  - rustup component add clippy-preview --toolchain=nightly
+  - rustup component add clippy-preview
 script:
   - cargo fmt --all -- --check
-  - RUSTFLAGS="-D warnings" cargo +nightly clippy
+  - RUSTFLAGS="-D warnings" cargo clippy
   - cargo test
   - cargo build --release
   - strip target/release/ray-tracing
   - ls -lh target/release/ray-tracing
-  

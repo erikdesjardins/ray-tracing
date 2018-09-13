@@ -1,3 +1,5 @@
+#![allow(many_single_char_names)]
+
 use std::f32;
 use std::io::{self, stdout};
 

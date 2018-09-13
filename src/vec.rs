@@ -87,6 +87,7 @@ impl MulAssign<f32> for Vec3 {
 
 impl Div<f32> for Vec3 {
     type Output = Self;
+    #[allow(suspicious_arithmetic_impl)]
     fn div(self, rhs: f32) -> Self {
         let k = 1. / rhs;
         Vec3(self.0 * k, self.1 * k, self.2 * k)

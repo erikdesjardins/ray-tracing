@@ -3,7 +3,7 @@ use rand::Rng;
 use hit::HitRecord;
 use ray::Ray;
 use rnd::random_in_unit_sphere;
-use vec::{dot, reflect, Vec3};
+use vec::{dot, Vec3};
 
 pub enum Material {
     Lambertian {
@@ -51,4 +51,8 @@ impl Material {
             }
         }
     }
+}
+
+fn reflect(v: Vec3, n: Vec3) -> Vec3 {
+    v - 2. * dot(v, n) * n
 }

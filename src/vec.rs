@@ -140,3 +140,7 @@ pub fn cross(a: Vec3, b: Vec3) -> Vec3 {
         a.0 * b.1 - a.1 * b.0,
     )
 }
+
+pub fn reflect(v: Vec3, n: Vec3) -> Vec3 {
+    v - 2. * dot(v, n) * n
+}

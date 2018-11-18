@@ -6,8 +6,13 @@ use rnd::random_in_unit_sphere;
 use vec::{dot, reflect, Vec3};
 
 pub enum Material {
-    Lambertian { albedo: Vec3 },
-    Metal { albedo: Vec3 },
+    Lambertian {
+        albedo: Vec3,
+    },
+    Metal {
+        albedo: Vec3,
+        fuzz: f32, /* 0..1 */
+    },
 }
 
 pub struct Scatter {
@@ -29,11 +34,11 @@ impl Material {
                     attenuation: *albedo,
                 })
             }
-            Material::Metal { albedo } => {
+            Material::Metal { albedo, fuzz } => {
                 let reflected = reflect(r_in.direction.unit_vector(), rec.normal);
                 let scattered = Ray {
                     origin: rec.p,
-                    direction: reflected,
+                    direction: reflected + *fuzz * random_in_unit_sphere(rng),
                 };
                 if dot(scattered.direction, rec.normal) > 0. {
                     Some(Scatter {

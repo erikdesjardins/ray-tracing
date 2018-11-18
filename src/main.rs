@@ -75,6 +75,7 @@ fn main() -> Result<(), io::Error> {
             radius: 0.5,
             material: Material::Metal {
                 albedo: Vec3(0.8, 0.6, 0.2),
+                fuzz: 1.0,
             },
         },
         Sphere {
@@ -82,6 +83,7 @@ fn main() -> Result<(), io::Error> {
             radius: 0.5,
             material: Material::Metal {
                 albedo: Vec3(0.8, 0.8, 0.8),
+                fuzz: 0.3,
             },
         },
     ];

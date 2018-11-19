@@ -90,21 +90,27 @@ fn main() -> Result<(), io::Error> {
         },
     ];
 
+    let origin = Vec3(3., 3., 2.);
+    let look_at = Vec3(0., 0., -1.);
+    let dist_to_focus = (origin - look_at).length();
+    let aperture = 2.;
     let cam = Camera::new(
-        Vec3(-2., 2., 1.),
-        Vec3(0., 0., -1.),
+        origin,
+        look_at,
         Vec3(0., 1., 0.),
-        90.,
+        20.,
         nx as f32 / ny as f32,
+        aperture,
+        dist_to_focus,
     );
 
     for j in (0..ny).rev() {
         for i in 0..nx {
             let mut col = Vec3(0., 0., 0.);
             for _ in 0..ns {
-                let u = (i as f32 + rng.sample::<f32, _>(Standard)) / nx as f32;
-                let v = (j as f32 + rng.sample::<f32, _>(Standard)) / ny as f32;
-                let r = cam.get_ray(u, v);
+                let s = (i as f32 + rng.sample::<f32, _>(Standard)) / nx as f32;
+                let t = (j as f32 + rng.sample::<f32, _>(Standard)) / ny as f32;
+                let r = cam.get_ray(&mut rng, s, t);
                 col += color(&mut rng, &r, &world, 0);
             }
             let col = col / ns as f32;

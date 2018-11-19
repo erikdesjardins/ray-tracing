@@ -90,12 +90,13 @@ fn main() -> Result<(), io::Error> {
         },
     ];
 
-    let cam = Camera {
-        origin: Vec3(0., 0., 0.),
-        lower_left_corner: Vec3(-2., -1., -1.),
-        horizontal: Vec3(4., 0., 0.),
-        vertical: Vec3(0., 2., 0.),
-    };
+    let cam = Camera::new(
+        Vec3(-2., 2., 1.),
+        Vec3(0., 0., -1.),
+        Vec3(0., 1., 0.),
+        90.,
+        nx as f32 / ny as f32,
+    );
 
     for j in (0..ny).rev() {
         for i in 0..nx {

@@ -49,56 +49,23 @@ fn color(rng: &mut impl Rng, r: &Ray, world: &impl Hittable, depth: u32) -> Vec3
 fn main() -> Result<(), io::Error> {
     let mut rng = XorShiftRng::from_seed([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
 
-    let nx = 200;
-    let ny = 100;
+    let nx = 400;
+    let ny = 200;
     let ns = 100;
 
     let mut ppm = ppm::Writer::new(stdout(), nx, ny)?;
 
-    let world = vec![
-        Sphere {
-            center: Vec3(0., 0., -1.),
-            radius: 0.5,
-            material: Material::Lambertian {
-                albedo: Vec3(0.1, 0.2, 0.5),
-            },
-        },
-        Sphere {
-            center: Vec3(0., -100.5, -1.),
-            radius: 100.,
-            material: Material::Lambertian {
-                albedo: Vec3(0.8, 0.8, 0.0),
-            },
-        },
-        Sphere {
-            center: Vec3(1., 0., -1.),
-            radius: 0.5,
-            material: Material::Metal {
-                albedo: Vec3(0.8, 0.6, 0.2),
-                fuzz: 1.0,
-            },
-        },
-        Sphere {
-            center: Vec3(-1., 0., -1.),
-            radius: 0.5,
-            material: Material::Dielectric { ref_idx: 1.5 },
-        },
-        Sphere {
-            center: Vec3(-1., 0., -1.),
-            radius: -0.45,
-            material: Material::Dielectric { ref_idx: 1.5 },
-        },
-    ];
+    let world = random_scene(&mut rng);
 
-    let origin = Vec3(3., 3., 2.);
-    let look_at = Vec3(0., 0., -1.);
+    let origin = Vec3(5., 1.5, 3.);
+    let look_at = Vec3(0., -1., 0.);
     let dist_to_focus = (origin - look_at).length();
-    let aperture = 2.;
+    let aperture = 0.1;
     let cam = Camera::new(
         origin,
         look_at,
         Vec3(0., 1., 0.),
-        20.,
+        70.,
         nx as f32 / ny as f32,
         aperture,
         dist_to_focus,
@@ -124,4 +91,73 @@ fn main() -> Result<(), io::Error> {
         }
     }
     Ok(())
+}
+
+fn random_scene(rng: &mut impl Rng) -> impl Hittable {
+    let mut spheres = Vec::new();
+    spheres.push(Sphere {
+        center: Vec3(0., -1000., 0.),
+        radius: 1000.,
+        material: Material::Lambertian {
+            albedo: Vec3(0.5, 0.5, 0.5),
+        },
+    });
+    spheres.push(Sphere {
+        center: Vec3(0., 1., 0.),
+        radius: 1.,
+        material: Material::Dielectric { ref_idx: 1.5 },
+    });
+    spheres.push(Sphere {
+        center: Vec3(-4., 1., 0.),
+        radius: 1.,
+        material: Material::Lambertian {
+            albedo: Vec3(0.4, 0.2, 0.1),
+        },
+    });
+    spheres.push(Sphere {
+        center: Vec3(4., 1., 0.),
+        radius: 1.,
+        material: Material::Metal {
+            albedo: Vec3(0.7, 0.6, 0.5),
+            fuzz: 0.,
+        },
+    });
+    for a in -11..11 {
+        for b in -11..11 {
+            let choose_mat = rng.sample::<f32, _>(Standard);
+            let center = Vec3(
+                a as f32 + 0.9 * rng.sample::<f32, _>(Standard),
+                0.2,
+                b as f32 + 0.9 * rng.sample::<f32, _>(Standard),
+            );
+            if (center - Vec3(4., 0.2, 0.)).length() > 0.9 {
+                let material = if choose_mat < 0.8 {
+                    Material::Lambertian {
+                        albedo: Vec3(
+                            rng.sample::<f32, _>(Standard) * rng.sample::<f32, _>(Standard),
+                            rng.sample::<f32, _>(Standard) * rng.sample::<f32, _>(Standard),
+                            rng.sample::<f32, _>(Standard) * rng.sample::<f32, _>(Standard),
+                        ),
+                    }
+                } else if choose_mat < 0.95 {
+                    Material::Metal {
+                        albedo: Vec3(
+                            0.5 * (1. + rng.sample::<f32, _>(Standard)),
+                            0.5 * (1. + rng.sample::<f32, _>(Standard)),
+                            0.5 * (1. + rng.sample::<f32, _>(Standard)),
+                        ),
+                        fuzz: 0.5 * rng.sample::<f32, _>(Standard),
+                    }
+                } else {
+                    Material::Dielectric { ref_idx: 1.5 }
+                };
+                spheres.push(Sphere {
+                    center,
+                    radius: 0.2,
+                    material,
+                });
+            }
+        }
+    }
+    spheres
 }

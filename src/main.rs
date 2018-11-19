@@ -60,7 +60,7 @@ fn main() -> Result<(), io::Error> {
             center: Vec3(0., 0., -1.),
             radius: 0.5,
             material: Material::Lambertian {
-                albedo: Vec3(0.8, 0.3, 0.3),
+                albedo: Vec3(0.1, 0.2, 0.5),
             },
         },
         Sphere {
@@ -81,10 +81,12 @@ fn main() -> Result<(), io::Error> {
         Sphere {
             center: Vec3(-1., 0., -1.),
             radius: 0.5,
-            material: Material::Metal {
-                albedo: Vec3(0.8, 0.8, 0.8),
-                fuzz: 0.3,
-            },
+            material: Material::Dielectric { ref_idx: 1.5 },
+        },
+        Sphere {
+            center: Vec3(-1., 0., -1.),
+            radius: -0.45,
+            material: Material::Dielectric { ref_idx: 1.5 },
         },
     ];
 

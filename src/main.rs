@@ -3,6 +3,7 @@
 
 use std::f32;
 use std::io::{self, stdout};
+use std::time::Instant;
 
 use rand::distributions::Standard;
 use rand::{Rng, SeedableRng, XorShiftRng};
@@ -47,6 +48,8 @@ fn color(rng: &mut impl Rng, r: &Ray, world: &impl Hittable, depth: u32) -> Vec3
 }
 
 fn main() -> Result<(), io::Error> {
+    let start = Instant::now();
+
     let mut rng = XorShiftRng::from_seed([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
 
     let nx = 400;
@@ -90,6 +93,10 @@ fn main() -> Result<(), io::Error> {
             ppm.write_pixel(ir, ig, ib)?;
         }
     }
+
+    let elapsed = start.elapsed();
+    eprintln!("{}.{:0>3}s", elapsed.as_secs(), elapsed.subsec_millis());
+
     Ok(())
 }
 

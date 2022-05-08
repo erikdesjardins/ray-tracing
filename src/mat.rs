@@ -107,7 +107,6 @@ fn refract(v: Vec3, n: Vec3, ni_over_nt: f32) -> Option<Vec3> {
 }
 
 fn schlick(cosine: f32, ref_idx: f32) -> f32 {
-    let r0 = (1. - ref_idx) / (1. + ref_idx);
-    let r0 = r0 * r0;
+    let r0 = ((1. - ref_idx) / (1. + ref_idx)).powi(2);
     r0 + (1. - r0) * (1. - cosine).powf(5.)
 }

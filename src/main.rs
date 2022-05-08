@@ -1,5 +1,4 @@
-#![cfg_attr(not(feature = "cargo-clippy"), allow(unknown_lints))]
-#![allow(many_single_char_names)]
+#![allow(clippy::many_single_char_names)]
 
 use std::f32;
 use std::io::{self, stdout};
@@ -32,11 +31,7 @@ fn color(rng: &mut impl Rng, r: &Ray, world: &impl Hittable, depth: u32) -> Vec3
             Some(Scatter {
                 attenuation,
                 ref scattered,
-            })
-                if depth < 50 =>
-            {
-                attenuation * color(rng, scattered, world, depth + 1)
-            }
+            }) if depth < 50 => attenuation * color(rng, scattered, world, depth + 1),
             _ => Vec3(0., 0., 0.),
         },
         None => {
@@ -101,34 +96,35 @@ fn main() -> Result<(), io::Error> {
 }
 
 fn random_scene(rng: &mut impl Rng) -> impl Hittable {
-    let mut spheres = Vec::new();
-    spheres.push(Sphere {
-        center: Vec3(0., -1000., 0.),
-        radius: 1000.,
-        material: Material::Lambertian {
-            albedo: Vec3(0.5, 0.5, 0.5),
+    let mut spheres = vec![
+        Sphere {
+            center: Vec3(0., -1000., 0.),
+            radius: 1000.,
+            material: Material::Lambertian {
+                albedo: Vec3(0.5, 0.5, 0.5),
+            },
         },
-    });
-    spheres.push(Sphere {
-        center: Vec3(0., 1., 0.),
-        radius: 1.,
-        material: Material::Dielectric { ref_idx: 1.5 },
-    });
-    spheres.push(Sphere {
-        center: Vec3(-4., 1., 0.),
-        radius: 1.,
-        material: Material::Lambertian {
-            albedo: Vec3(0.4, 0.2, 0.1),
+        Sphere {
+            center: Vec3(0., 1., 0.),
+            radius: 1.,
+            material: Material::Dielectric { ref_idx: 1.5 },
         },
-    });
-    spheres.push(Sphere {
-        center: Vec3(4., 1., 0.),
-        radius: 1.,
-        material: Material::Metal {
-            albedo: Vec3(0.7, 0.6, 0.5),
-            fuzz: 0.,
+        Sphere {
+            center: Vec3(-4., 1., 0.),
+            radius: 1.,
+            material: Material::Lambertian {
+                albedo: Vec3(0.4, 0.2, 0.1),
+            },
         },
-    });
+        Sphere {
+            center: Vec3(4., 1., 0.),
+            radius: 1.,
+            material: Material::Metal {
+                albedo: Vec3(0.7, 0.6, 0.5),
+                fuzz: 0.,
+            },
+        },
+    ];
     for a in -11..11 {
         for b in -11..11 {
             let choose_mat = rng.sample::<f32, _>(Standard);

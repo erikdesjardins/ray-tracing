@@ -1,10 +1,10 @@
 use rand::distributions::Standard;
 use rand::Rng;
 
-use hit::HitRecord;
-use ray::Ray;
-use rnd::random_in_unit_sphere;
-use vec::{dot, Vec3};
+use crate::hit::HitRecord;
+use crate::ray::Ray;
+use crate::rnd::random_in_unit_sphere;
+use crate::vec::{dot, Vec3};
 
 pub enum Material {
     Lambertian {

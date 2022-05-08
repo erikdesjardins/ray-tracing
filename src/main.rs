@@ -5,16 +5,15 @@ use std::io::{self, stdout};
 use std::time::Instant;
 
 use rand::distributions::Standard;
-use rand::{Rng, SeedableRng, XorShiftRng};
+use rand::rngs::SmallRng;
+use rand::{Rng, SeedableRng};
 
-use cam::Camera;
-use hit::Hittable;
-use mat::{Material, Scatter};
-use ray::Ray;
-use sph::Sphere;
-use vec::Vec3;
-
-extern crate rand;
+use crate::cam::Camera;
+use crate::hit::Hittable;
+use crate::mat::{Material, Scatter};
+use crate::ray::Ray;
+use crate::sph::Sphere;
+use crate::vec::Vec3;
 
 mod cam;
 mod hit;
@@ -45,7 +44,17 @@ fn color(rng: &mut impl Rng, r: &Ray, world: &impl Hittable, depth: u32) -> Vec3
 fn main() -> Result<(), io::Error> {
     let start = Instant::now();
 
-    let mut rng = XorShiftRng::from_seed([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
+    const SEED: [u8; 32] = {
+        let mut arr = [0; 32];
+        let mut i = 0;
+        while i < arr.len() {
+            arr[i] = i as _;
+            i += 1;
+        }
+        arr
+    };
+
+    let mut rng = SmallRng::from_seed(SEED);
 
     let nx = 400;
     let ny = 200;

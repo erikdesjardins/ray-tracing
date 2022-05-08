@@ -1,9 +1,9 @@
 use std::ops::Range;
 
-use hit::{HitRecord, Hittable};
-use mat::Material;
-use ray::Ray;
-use vec::{dot, Vec3};
+use crate::hit::{HitRecord, Hittable};
+use crate::mat::Material;
+use crate::ray::Ray;
+use crate::vec::{dot, Vec3};
 
 pub struct Sphere {
     pub center: Vec3,

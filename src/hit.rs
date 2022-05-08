@@ -1,8 +1,8 @@
 use std::ops::Range;
 
-use mat::Material;
-use ray::Ray;
-use vec::Vec3;
+use crate::mat::Material;
+use crate::ray::Ray;
+use crate::vec::Vec3;
 
 pub struct HitRecord<'a> {
     pub t: f32,

@@ -2,9 +2,9 @@ use std::f32::consts::PI;
 
 use rand::Rng;
 
-use ray::Ray;
-use rnd::random_in_unit_disk;
-use vec::{cross, Vec3};
+use crate::ray::Ray;
+use crate::rnd::random_in_unit_disk;
+use crate::vec::{cross, Vec3};
 
 pub struct Camera {
     origin: Vec3,

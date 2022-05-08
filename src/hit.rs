@@ -1,8 +1,8 @@
 use std::ops::Range;
 
-use mat::Material;
-use ray::Ray;
-use vec::Vec3;
+use crate::mat::Material;
+use crate::ray::Ray;
+use crate::vec::Vec3;
 
 pub struct HitRecord<'a> {
     pub t: f32,
@@ -17,13 +17,13 @@ pub trait Hittable {
 
 impl<'a, T: Hittable> Hittable for &'a T {
     fn hit(&self, r: &Ray, t_range: Range<f32>) -> Option<HitRecord<'_>> {
-        <T as Hittable>::hit(self, r, t_range)
+        T::hit(self, r, t_range)
     }
 }
 
 impl<'a, T: Hittable> Hittable for &'a mut T {
     fn hit(&self, r: &Ray, t_range: Range<f32>) -> Option<HitRecord<'_>> {
-        <T as Hittable>::hit(self, r, t_range)
+        T::hit(self, r, t_range)
     }
 }
 

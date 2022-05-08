@@ -19,9 +19,7 @@ impl Add for Vec3 {
 
 impl AddAssign for Vec3 {
     fn add_assign(&mut self, rhs: Self) {
-        self.0 += rhs.0;
-        self.1 += rhs.1;
-        self.2 += rhs.2;
+        *self = *self + rhs;
     }
 }
 
@@ -34,9 +32,7 @@ impl Sub for Vec3 {
 
 impl SubAssign for Vec3 {
     fn sub_assign(&mut self, rhs: Self) {
-        self.0 -= rhs.0;
-        self.1 -= rhs.1;
-        self.2 -= rhs.2;
+        *self = *self - rhs;
     }
 }
 
@@ -49,9 +45,7 @@ impl Mul for Vec3 {
 
 impl MulAssign for Vec3 {
     fn mul_assign(&mut self, rhs: Self) {
-        self.0 *= rhs.0;
-        self.1 *= rhs.1;
-        self.2 *= rhs.2;
+        *self = *self * rhs;
     }
 }
 
@@ -64,30 +58,32 @@ impl Div for Vec3 {
 
 impl DivAssign for Vec3 {
     fn div_assign(&mut self, rhs: Self) {
-        self.0 /= rhs.0;
-        self.1 /= rhs.1;
-        self.2 /= rhs.2;
+        *self = *self / rhs
+    }
+}
+
+impl Mul<f32> for Vec3 {
+    type Output = Vec3;
+    fn mul(self, rhs: f32) -> Vec3 {
+        Vec3(self.0 * rhs, self.1 * rhs, self.2 * rhs)
     }
 }
 
 impl Mul<Vec3> for f32 {
     type Output = Vec3;
-    fn mul(self, vec: Vec3) -> Vec3 {
-        Vec3(self * vec.0, self * vec.1, self * vec.2)
+    fn mul(self, rhs: Vec3) -> Vec3 {
+        rhs * self
     }
 }
 
 impl MulAssign<f32> for Vec3 {
     fn mul_assign(&mut self, rhs: f32) {
-        self.0 *= rhs;
-        self.1 *= rhs;
-        self.2 *= rhs;
+        *self = *self * rhs;
     }
 }
 
 impl Div<f32> for Vec3 {
     type Output = Self;
-    #[allow(suspicious_arithmetic_impl)]
     fn div(self, rhs: f32) -> Self {
         let k = 1. / rhs;
         Vec3(self.0 * k, self.1 * k, self.2 * k)
@@ -96,9 +92,7 @@ impl Div<f32> for Vec3 {
 
 impl DivAssign<f32> for Vec3 {
     fn div_assign(&mut self, rhs: f32) {
-        self.0 /= rhs;
-        self.1 /= rhs;
-        self.2 /= rhs;
+        *self = *self / rhs;
     }
 }
 

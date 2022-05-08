@@ -1,21 +1,19 @@
-#![cfg_attr(not(feature = "cargo-clippy"), allow(unknown_lints))]
-#![allow(many_single_char_names)]
+#![allow(clippy::many_single_char_names)]
 
 use std::f32;
 use std::io::{self, stdout};
 use std::time::Instant;
 
 use rand::distributions::Standard;
-use rand::{Rng, SeedableRng, XorShiftRng};
+use rand::rngs::SmallRng;
+use rand::{Rng, SeedableRng};
 
-use cam::Camera;
-use hit::Hittable;
-use mat::{Material, Scatter};
-use ray::Ray;
-use sph::Sphere;
-use vec::Vec3;
-
-extern crate rand;
+use crate::cam::Camera;
+use crate::hit::Hittable;
+use crate::mat::{Material, Scatter};
+use crate::ray::Ray;
+use crate::sph::Sphere;
+use crate::vec::Vec3;
 
 mod cam;
 mod hit;
@@ -32,11 +30,7 @@ fn color(rng: &mut impl Rng, r: &Ray, world: &impl Hittable, depth: u32) -> Vec3
             Some(Scatter {
                 attenuation,
                 ref scattered,
-            })
-                if depth < 50 =>
-            {
-                attenuation * color(rng, scattered, world, depth + 1)
-            }
+            }) if depth < 50 => attenuation * color(rng, scattered, world, depth + 1),
             _ => Vec3(0., 0., 0.),
         },
         None => {
@@ -50,7 +44,17 @@ fn color(rng: &mut impl Rng, r: &Ray, world: &impl Hittable, depth: u32) -> Vec3
 fn main() -> Result<(), io::Error> {
     let start = Instant::now();
 
-    let mut rng = XorShiftRng::from_seed([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
+    const SEED: [u8; 32] = {
+        let mut arr = [0; 32];
+        let mut i = 0;
+        while i < arr.len() {
+            arr[i] = i as _;
+            i += 1;
+        }
+        arr
+    };
+
+    let mut rng = SmallRng::from_seed(SEED);
 
     let nx = 400;
     let ny = 200;
@@ -101,34 +105,35 @@ fn main() -> Result<(), io::Error> {
 }
 
 fn random_scene(rng: &mut impl Rng) -> impl Hittable {
-    let mut spheres = Vec::new();
-    spheres.push(Sphere {
-        center: Vec3(0., -1000., 0.),
-        radius: 1000.,
-        material: Material::Lambertian {
-            albedo: Vec3(0.5, 0.5, 0.5),
+    let mut spheres = vec![
+        Sphere {
+            center: Vec3(0., -1000., 0.),
+            radius: 1000.,
+            material: Material::Lambertian {
+                albedo: Vec3(0.5, 0.5, 0.5),
+            },
         },
-    });
-    spheres.push(Sphere {
-        center: Vec3(0., 1., 0.),
-        radius: 1.,
-        material: Material::Dielectric { ref_idx: 1.5 },
-    });
-    spheres.push(Sphere {
-        center: Vec3(-4., 1., 0.),
-        radius: 1.,
-        material: Material::Lambertian {
-            albedo: Vec3(0.4, 0.2, 0.1),
+        Sphere {
+            center: Vec3(0., 1., 0.),
+            radius: 1.,
+            material: Material::Dielectric { ref_idx: 1.5 },
         },
-    });
-    spheres.push(Sphere {
-        center: Vec3(4., 1., 0.),
-        radius: 1.,
-        material: Material::Metal {
-            albedo: Vec3(0.7, 0.6, 0.5),
-            fuzz: 0.,
+        Sphere {
+            center: Vec3(-4., 1., 0.),
+            radius: 1.,
+            material: Material::Lambertian {
+                albedo: Vec3(0.4, 0.2, 0.1),
+            },
         },
-    });
+        Sphere {
+            center: Vec3(4., 1., 0.),
+            radius: 1.,
+            material: Material::Metal {
+                albedo: Vec3(0.7, 0.6, 0.5),
+                fuzz: 0.,
+            },
+        },
+    ];
     for a in -11..11 {
         for b in -11..11 {
             let choose_mat = rng.sample::<f32, _>(Standard);

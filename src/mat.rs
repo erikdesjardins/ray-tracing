@@ -1,10 +1,10 @@
 use rand::distributions::Standard;
 use rand::Rng;
 
-use hit::HitRecord;
-use ray::Ray;
-use rnd::random_in_unit_sphere;
-use vec::{dot, Vec3};
+use crate::hit::HitRecord;
+use crate::ray::Ray;
+use crate::rnd::random_in_unit_sphere;
+use crate::vec::{dot, Vec3};
 
 pub enum Material {
     Lambertian {
@@ -107,7 +107,6 @@ fn refract(v: Vec3, n: Vec3, ni_over_nt: f32) -> Option<Vec3> {
 }
 
 fn schlick(cosine: f32, ref_idx: f32) -> f32 {
-    let r0 = (1. - ref_idx) / (1. + ref_idx);
-    let r0 = r0 * r0;
+    let r0 = ((1. - ref_idx) / (1. + ref_idx)).powi(2);
     r0 + (1. - r0) * (1. - cosine).powf(5.)
 }
